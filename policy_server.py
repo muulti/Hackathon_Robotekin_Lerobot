@@ -10,7 +10,7 @@ from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse
 
 import s1
 
@@ -26,11 +26,14 @@ POLICIES = {
 }
 
 # Dataset folder (with exactly 1 recorded episode) replayed by the dance button.
-DANCE_PATH = "./dance/"
+DANCE_PATH = "/Users/multi/.cache/huggingface/lerobot/Mvltit/baile_2_20261025_112222"
 
 REPLAYS = {
     "dance": DANCE_PATH,
 }
+
+# Song played by the page during the dance (put the file next to this script).
+DANCE_SONG = Path(__file__).parent / "portal.mp3"
 
 app = FastAPI()
 robot_lock = threading.Lock()  # the arm does one thing at a time
@@ -40,6 +43,13 @@ robot_lock = threading.Lock()  # the arm does one thing at a time
 def index():
     html = (Path(__file__).parent / "index.html").read_text(encoding="utf-8")
     return HTMLResponse(html, headers={"Cache-Control": "no-store"})
+
+
+@app.get("/dance-song")
+def dance_song():
+    if not DANCE_SONG.is_file():
+        raise HTTPException(404, f"Song not found: {DANCE_SONG}")
+    return FileResponse(DANCE_SONG, media_type="audio/mpeg")
 
 
 def execute(name, error, run):

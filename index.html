@@ -141,6 +141,12 @@
     const API_BASE_URL = window.location.origin;
     const MOCK_DELAY_MS = 3000;
 
+    // Canción del baile (la sirve policy_server.py desde portal.mp3).
+    const DANCE_SONG_URL = '/dance-song';
+    // Milisegundos entre el clic y el inicio de la música. El robot tarda unos
+    // segundos en cargar antes de moverse: ajusta este valor hasta que coincidan.
+    const DANCE_MUSIC_DELAY_MS = 5000;
+
     const buttons = [...document.querySelectorAll('.product-button')];
     const statusBadge = document.querySelector('#statusBadge');
     const statusIcon = document.querySelector('#statusIcon');
@@ -257,7 +263,29 @@
       });
     }
 
-    // Dance: a single dataset replay (no coin step).
+    const danceAudio = new Audio(DANCE_SONG_URL);
+    danceAudio.preload = 'auto';
+    let musicTimer;
+
+    function startDanceMusic() {
+      window.clearTimeout(musicTimer);
+      danceAudio.currentTime = 0;
+      if (DANCE_MUSIC_DELAY_MS <= 0) {
+        danceAudio.play().catch(() => {});
+        return;
+      }
+      // Desbloquea el audio dentro del clic y empieza de verdad tras el retardo.
+      danceAudio.play().then(() => { danceAudio.pause(); danceAudio.currentTime = 0; }).catch(() => {});
+      musicTimer = window.setTimeout(() => danceAudio.play().catch(() => {}), DANCE_MUSIC_DELAY_MS);
+    }
+
+    function stopDanceMusic() {
+      window.clearTimeout(musicTimer);
+      danceAudio.pause();
+      danceAudio.currentTime = 0;
+    }
+
+    // Dance: a single dataset replay (no coin step), with music.
     function runDance() {
       return runExclusive(async () => {
         setStatus({
@@ -265,7 +293,12 @@
           detail: 'El SO-101 está repitiendo el baile grabado.', step: 'Paso 1 de 1', progress: 20,
           icon: '<span aria-hidden="true">💃</span>', working: true
         });
-        await callInference('/api/v1/replay/dance');
+        startDanceMusic();
+        try {
+          await callInference('/api/v1/replay/dance');
+        } finally {
+          stopDanceMusic();
+        }
 
         setStatus({
           badge: 'Completado', message: '✅ ¡Baile terminado!',

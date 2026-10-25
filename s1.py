@@ -21,7 +21,7 @@ POLICY_PATH = (
 ROBOT_ID = "Desinformatico"
 ROBOT_TYPE = "so101_follower"
 ROBOT_PORT = "/dev/tty.usbmodem5B610343321"
-DURATION_SECONDS = 30
+DURATION_SECONDS = 15
 
 CAMERAS = (
     "{Camara_Alta: {type: opencv, index_or_path: 0, width: 640, "
