@@ -13,10 +13,9 @@ import tkinter as tk
 from tkinter import messagebox, scrolledtext
 from pathlib import Path
 
+#HERE ARE SOME PLACHOLDERS!!
 POLICY_PATH = (
-    "/Users/multi/.cache/huggingface/lerobot/outputs/train/"
-    "act_local_moneda_Dataset_bueno_2026-10-24_01-37-17/run/"
-    "checkpoints/last/pretrained_model"
+    "path_placeholder"
 )
 ROBOT_ID = "Desinformatico"
 ROBOT_TYPE = "so101_follower"
