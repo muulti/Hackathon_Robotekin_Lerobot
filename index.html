@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f7f7f2" />
+  <title>Tienda Automatizada SO-101</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+    :root {
+      color-scheme: light;
+      --ink: #18231f;
+      --muted: #6c7771;
+      --line: #e3e8e3;
+      --paper: #fbfcf8;
+      --green: #1f754d;
+      --red: #d9473f;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      background-color: #f6f7f2;
+      background-image: radial-gradient(#dce4dc 0.8px, transparent 0.8px);
+      background-size: 22px 22px;
+    }
+    h1, h2, .display { font-family: 'Space Grotesk', sans-serif; }
+    .panel { background: rgba(255, 255, 252, 0.94); border: 1px solid var(--line); }
+    .product-button { transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease; }
+    .product-button:not(:disabled):hover { transform: translateY(-3px); box-shadow: 0 16px 28px -20px rgba(20, 43, 31, 0.42); }
+    .product-button:focus-visible { outline: 3px solid #1f754d; outline-offset: 3px; }
+    .product-button:disabled { cursor: wait; opacity: 0.58; }
+    .status-pulse { animation: pulse 1.4s ease-in-out infinite; }
+    @keyframes pulse { 50% { opacity: 0.38; } }
+    @keyframes rise-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .enter { animation: rise-in 500ms ease-out both; }
+    .enter-late { animation: rise-in 500ms 120ms ease-out both; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+      .product-button { transition: none; }
+    }
+  </style>
+</head>
+<body class="px-4 py-6 sm:px-8 sm:py-10">
+  <main class="mx-auto w-full max-w-5xl">
+    <header class="enter mb-9 flex flex-col gap-5 border-b border-[#dfe5df] pb-7 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <div class="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#527362]">
+          <span class="inline-block h-2 w-2 rounded-full bg-[#38a36c]"></span>
+          Demo de robótica · LeRobot
+        </div>
+        <h1 class="max-w-3xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl">🛒 Tienda Automatizada SO-101 <span class="text-[#75827a]">(LeRobot)</span></h1>
+        <p class="mt-3 max-w-2xl text-sm leading-6 text-[#66716b] sm:text-base">Elige una fruta y deja que el brazo robótico prepare tu pedido.</p>
+      </div>
+      <div class="flex shrink-0 items-center gap-2 self-start rounded-full border border-[#dce5dd] bg-white/80 px-3 py-2 text-xs font-semibold text-[#476152] sm:self-auto">
+        <span class="h-2 w-2 rounded-full bg-[#42a875]"></span>
+        SO-101 <span class="text-[#a2aba4]">/</span> En línea
+      </div>
+    </header>
+
+    <section class="enter-late grid gap-7 lg:grid-cols-[1.15fr_0.85fr]">
+      <div>
+        <div class="mb-3 flex items-end justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[0.12em] text-[#7a857e]">La selección de hoy</p>
+            <h2 class="mt-1 text-xl font-bold">Elige tu fruta</h2>
+          </div>
+          <span class="pb-1 text-xs font-medium text-[#879189]">3 opciones</span>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <button id="appleButton" class="product-button panel group relative flex min-h-[250px] flex-col overflow-hidden rounded-xl p-5 text-left" type="button" data-fruit="manzana" aria-describedby="appleCube">
+            <span class="absolute right-4 top-4 rounded-full bg-[#fff0ed] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#b64038]">Cubo rojo</span>
+            <span class="mb-5 grid h-24 w-24 place-items-center rounded-full bg-[#fff0ed] text-6xl transition-transform duration-200 group-hover:scale-105" aria-hidden="true">🍎</span>
+            <span class="mt-auto text-lg font-bold">Comprar Manzana</span>
+            <span id="appleCube" class="mt-1 text-sm text-[#77817a]">Entrega con cubo rojo</span>
+            <span class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[#ba4138]">Iniciar pedido <span aria-hidden="true">↗</span></span>
+          </button>
+
+          <button id="pearButton" class="product-button panel group relative flex min-h-[250px] flex-col overflow-hidden rounded-xl p-5 text-left" type="button" data-fruit="pera" aria-describedby="pearCube">
+            <span class="absolute right-4 top-4 rounded-full bg-[#edf7e9] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#4f783c]">Cubo verde</span>
+            <span class="mb-5 grid h-24 w-24 place-items-center rounded-full bg-[#edf7e9] text-6xl transition-transform duration-200 group-hover:scale-105" aria-hidden="true">🍐</span>
+            <span class="mt-auto text-lg font-bold">Comprar Pera</span>
+            <span id="pearCube" class="mt-1 text-sm text-[#77817a]">Entrega con cubo verde</span>
+            <span class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[#427647]">Iniciar pedido <span aria-hidden="true">↗</span></span>
+          </button>
+
+          <button id="danceButton" class="product-button panel group relative flex min-h-[170px] flex-col overflow-hidden rounded-xl p-5 text-left sm:col-span-2" type="button" data-action="dance" aria-describedby="danceDesc">
+            <span class="absolute right-4 top-4 rounded-full bg-[#f1ecfb] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#6a4fa8]">Extra</span>
+            <span class="mb-4 grid h-16 w-16 place-items-center rounded-full bg-[#f1ecfb] text-4xl transition-transform duration-200 group-hover:scale-105" aria-hidden="true">💃</span>
+            <span class="mt-auto text-lg font-bold">Ver Baile</span>
+            <span id="danceDesc" class="mt-1 text-sm text-[#77817a]">El brazo reproduce una coreografía grabada</span>
+            <span class="mt-3 inline-flex items-center gap-2 text-sm font-bold text-[#6a4fa8]">Iniciar baile <span aria-hidden="true">↗</span></span>
+          </button>
+        </div>
+        <div class="mt-5 flex items-center gap-2 text-xs text-[#78837b]">
+          <svg class="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.5 3.75 5v4.25c0 4.05 2.67 6.7 6.25 8.25 3.58-1.55 6.25-4.2 6.25-8.25V5L10 2.5Z" stroke="currentColor" stroke-width="1.5"/><path d="m7.5 9.75 1.65 1.65 3.6-3.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          El brazo solo acepta un pedido a la vez.
+        </div>
+      </div>
+
+      <aside class="panel flex min-h-[340px] flex-col rounded-xl p-5 sm:p-6" aria-labelledby="statusTitle">
+        <div class="flex items-center justify-between border-b border-[#e8ece7] pb-4">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[0.12em] text-[#7a857e]">Monitor de ejecución</p>
+            <h2 id="statusTitle" class="mt-1 text-xl font-bold">Estado del robot</h2>
+          </div>
+          <span id="statusBadge" class="rounded-full bg-[#edf4ee] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#4b7458]">Listo</span>
+        </div>
+
+        <div class="flex flex-1 flex-col justify-center py-7" aria-live="polite" aria-atomic="true">
+          <div id="statusIcon" class="mb-4 grid h-12 w-12 place-items-center rounded-full bg-[#edf4ee] text-xl text-[#427252]" aria-hidden="true">
+            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="none"><path d="M10 2.5a7.5 7.5 0 1 0 7.5 7.5A7.5 7.5 0 0 0 10 2.5Z" stroke="currentColor" stroke-width="1.5"/><path d="m6.75 10 2.1 2.1 4.4-4.45" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <p id="statusMessage" class="display text-lg font-semibold leading-7">Listo para recibir tu pedido.</p>
+          <p id="statusDetail" class="mt-2 text-sm leading-6 text-[#78837b]">Selecciona una fruta para iniciar la secuencia del SO-101.</p>
+        </div>
+
+        <div class="border-t border-[#e8ece7] pt-4">
+          <div class="mb-2 flex justify-between text-[11px] font-semibold uppercase tracking-wider text-[#879189]"><span>Secuencia</span><span id="stepLabel">En espera</span></div>
+          <div class="h-1.5 overflow-hidden rounded-full bg-[#edf0eb]"><div id="progressBar" class="h-full w-0 rounded-full bg-[#39865c] transition-all duration-500"></div></div>
+          <div class="mt-4 flex items-center justify-between text-xs text-[#8a948d]"><span>LeRobot inference</span><span id="elapsedLabel">--:--</span></div>
+        </div>
+      </aside>
+    </section>
+
+    <footer class="mt-8 flex flex-col gap-2 border-t border-[#dfe5df] pt-4 text-xs text-[#89928b] sm:flex-row sm:items-center sm:justify-between">
+      <span>Demo de tienda automatizada · Hackatón SO-101</span>
+      <span class="font-mono">API <span id="apiMode">simulada</span></span>
+    </footer>
+  </main>
+
+  <script>
+    // Activa el modo mock solo si quieres probar la interfaz sin el backend.
+    const USE_MOCK_API = false;
+    // La página se sirve desde FastAPI en el mismo origen.
+    const API_BASE_URL = window.location.origin;
+    const MOCK_DELAY_MS = 3000;
+
+    const buttons = [...document.querySelectorAll('.product-button')];
+    const statusBadge = document.querySelector('#statusBadge');
+    const statusIcon = document.querySelector('#statusIcon');
+    const statusMessage = document.querySelector('#statusMessage');
+    const statusDetail = document.querySelector('#statusDetail');
+    const stepLabel = document.querySelector('#stepLabel');
+    const progressBar = document.querySelector('#progressBar');
+    const elapsedLabel = document.querySelector('#elapsedLabel');
+    let orderInProgress = false;
+    let elapsedTimer;
+
+    const fruitOrders = {
+      manzana: { label: 'Manzana', emoji: '🍎', endpoint: '/api/v1/inferencia/manzana', color: 'text-[#b64038]' },
+      pera: { label: 'Pera', emoji: '🍐', endpoint: '/api/v1/inferencia/pera', color: 'text-[#4f783c]' }
+    };
+
+    document.querySelector('#apiMode').textContent = USE_MOCK_API ? 'simulada' : 'local';
+
+    function setStatus({ badge, message, detail, step, progress, icon, working = false, success = false }) {
+      statusBadge.textContent = badge;
+      statusMessage.textContent = message;
+      statusDetail.textContent = detail;
+      stepLabel.textContent = step;
+      progressBar.style.width = `${progress}%`;
+      statusBadge.className = `rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${working ? 'bg-[#fff4dd] text-[#936713]' : success ? 'bg-[#edf4ee] text-[#4b7458]' : 'bg-[#edf4ee] text-[#4b7458]'}`;
+      statusIcon.className = `mb-4 grid h-12 w-12 place-items-center rounded-full ${working ? 'bg-[#fff4dd] text-[#a7791e]' : success ? 'bg-[#edf4ee] text-[#427252]' : 'bg-[#edf4ee] text-[#427252]'}`;
+      statusIcon.innerHTML = icon;
+      if (working) statusIcon.classList.add('status-pulse');
+      else statusIcon.classList.remove('status-pulse');
+    }
+
+    function wait(milliseconds) {
+      return new Promise(resolve => window.setTimeout(resolve, milliseconds));
+    }
+
+    async function callInference(endpoint) {
+      if (USE_MOCK_API) {
+        await wait(MOCK_DELAY_MS);
+        return { success: true };
+      }
+
+      // En modo real, cambia API_BASE_URL y estos endpoints para que coincidan con Flask/FastAPI.
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ source: 'so101-fruit-store' })
+      });
+      let result = {};
+      try {
+        result = await response.json();
+      } catch {
+        result = {};
+      }
+      if (!response.ok) throw new Error(result.detail || `El servidor respondió ${response.status}`);
+      if (result.success === false) throw new Error(result.message || 'La inferencia no se completó.');
+      return result;
+    }
+
+    // Runs one task at a time: disables buttons, shows the timer, handles errors.
+    async function runExclusive(task) {
+      if (orderInProgress) return;
+      orderInProgress = true;
+      buttons.forEach(button => { button.disabled = true; });
+      const startedAt = Date.now();
+      elapsedLabel.textContent = '00:00';
+      elapsedTimer = window.setInterval(() => {
+        const seconds = Math.floor((Date.now() - startedAt) / 1000);
+        elapsedLabel.textContent = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+      }, 500);
+
+      try {
+        await task();
+      } catch (error) {
+        setStatus({
+          badge: 'Error', message: 'No se pudo completar el pedido.',
+          detail: error instanceof Error ? error.message : 'Ocurrió un error inesperado. Inténtalo de nuevo.',
+          step: 'Interrumpido', progress: 0,
+          icon: '<svg class="h-5 w-5" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 6.25v4.5m0 3h.01M10 2.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'
+        });
+        statusBadge.className = 'rounded-full bg-[#fff0ed] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#b64038]';
+        statusIcon.className = 'mb-4 grid h-12 w-12 place-items-center rounded-full bg-[#fff0ed] text-[#b64038]';
+      } finally {
+        window.clearInterval(elapsedTimer);
+        orderInProgress = false;
+        buttons.forEach(button => { button.disabled = false; });
+      }
+    }
+
+    const checkIcon = '<svg class="h-5 w-5" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4.5 10.25 3.4 3.4 7.6-7.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+    // Fruit order: coin policy first, then the fruit policy.
+    function placeOrder(fruitKey) {
+      const fruit = fruitOrders[fruitKey];
+      return runExclusive(async () => {
+        setStatus({
+          badge: 'En proceso', message: '🪙 Paso 1: Introduce la moneda. Ejecutando inferencia \'recoger_moneda\'...',
+          detail: 'El brazo se está preparando para recibir la moneda.', step: 'Paso 1 de 2', progress: 12,
+          icon: '<span aria-hidden="true">🪙</span>', working: true
+        });
+        await callInference('/api/v1/inferencia/moneda');
+
+        setStatus({
+          badge: 'En proceso', message: `${fruit.emoji} Paso 2: Moneda recibida. Ejecutando inferencia 'recoger_${fruitKey}'...`,
+          detail: `El SO-101 está recogiendo la ${fruit.label.toLowerCase()} del cubo correspondiente.`, step: 'Paso 2 de 2', progress: 62,
+          icon: `<span aria-hidden="true">${fruit.emoji}</span>`, working: true
+        });
+        await callInference(fruit.endpoint);
+
+        setStatus({
+          badge: 'Completado', message: `✅ ¡${fruit.label} entregada con éxito! Disfrute su compra`,
+          detail: 'Pedido completado. El brazo está listo para una nueva compra.', step: 'Pedido completado', progress: 100,
+          icon: checkIcon, success: true
+        });
+      });
+    }
+
+    // Dance: a single dataset replay (no coin step).
+    function runDance() {
+      return runExclusive(async () => {
+        setStatus({
+          badge: 'En proceso', message: '💃 Reproduciendo la coreografía...',
+          detail: 'El SO-101 está repitiendo el baile grabado.', step: 'Paso 1 de 1', progress: 20,
+          icon: '<span aria-hidden="true">💃</span>', working: true
+        });
+        await callInference('/api/v1/replay/dance');
+
+        setStatus({
+          badge: 'Completado', message: '✅ ¡Baile terminado!',
+          detail: 'El brazo está listo para una nueva acción.', step: 'Baile completado', progress: 100,
+          icon: checkIcon, success: true
+        });
+      });
+    }
+
+    buttons.forEach(button => button.addEventListener('click', () =>
+      button.dataset.action === 'dance' ? runDance() : placeOrder(button.dataset.fruit)
+    ));
+  </script>
+</body>
+</html>
