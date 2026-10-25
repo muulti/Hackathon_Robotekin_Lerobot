@@ -20,13 +20,13 @@ CAMS_OVERVIEW_WRIST = s1.make_cameras("overview", "wrist")
 
 # Endpoint name used by index.html -> (policy folder, camera config)
 POLICIES = {
-    "moneda": ("/Users/multi/.cache/huggingface/lerobot/outputs/train/act_local_moneda_Dataset_bueno_2026-10-24_01-37-17/run/checkpoints/last/pretrained_model", CAMS_DEFAULT),
-    "manzana": ("/Users/multi/Desktop/manzana/act_good2_008000/pretrained_model", CAMS_OVERVIEW_WRIST),
-    "pera": ("/Users/multi/Desktop/pera/pretrained_model", CAMS_DEFAULT),
+    "moneda": ("PATH_TO_COIN_POLICY", CAMS_DEFAULT),
+    "manzana": ("PATH_TO_PICKUP_APPLE_POLICY", CAMS_OVERVIEW_WRIST),
+    "pera": ("PATH_TO_PICKUP_PEAR_POLICY", CAMS_DEFAULT),
 }
 
 # Dataset folder (with exactly 1 recorded episode) replayed by the dance button.
-DANCE_PATH = "/Users/multi/.cache/huggingface/lerobot/Mvltit/baile_2_20261025_112222"
+DANCE_PATH = "PATH_TO_DANCE_DATASET"
 
 REPLAYS = {
     "dance": DANCE_PATH,
